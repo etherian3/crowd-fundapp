@@ -125,4 +125,60 @@ export const CrowdFundProvider = ({ children }) => {
 
     return parsedDonations;
   };
+
+  // CHECK IF WALLET IS CONNECTED
+  const checkIfWalletIsConnected = async () => {
+    try {
+      if (!window.ethereum)
+        return setOpenError(true), setError("Install Metamask");
+
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
+
+      if (accounts.length) {
+        setCurrentAccount(accounts[0]);
+      } else {
+        console.log("No Account Found");
+      }
+    } catch (error) {
+      console.log("Something wrong while connecting to wallet");
+    }
+  };
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
+
+  // CONNECT WALLET FUNCTION
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum)
+        return setOpenError(true), setError("Install Metamask");
+
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setCurrentAccount(accounts[0]);
+    } catch (error) {
+      console.log("Error while connecting to wallet");
+    }
+  };
+
+  return (
+    <CrowdFundContext.Provider
+      value={{
+        titleData,
+        currentAccount,
+        createCampaign,
+        getCampaigns,
+        getUserCampaigns,
+        donate,
+        getDonations,
+        connectWallet,
+      }}
+    >
+      {children}
+    </CrowdFundContext.Provider>
+  );
 };
