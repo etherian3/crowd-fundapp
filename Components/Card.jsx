@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, isFinished = false }) => {
+const Card = ({
+  title,
+  allcampaign,
+  setOpenModel,
+  setDonateCampaign,
+  isLoading,
+  isFinished = false,
+}) => {
   const [campaigns, setCampaigns] = useState([]);
 
   useEffect(() => {
@@ -15,11 +22,11 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
       const deadlineTimestamp = Number(deadline);
       const deadlineMs = deadlineTimestamp * 1000;
       const currentTime = Date.now();
-      
+
       // Hitung selisih dalam hari
       const diffTime = deadlineMs - currentTime;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       // Pastikan nilai tidak negatif
       return Math.max(0, diffDays);
     } catch (error) {
@@ -71,13 +78,13 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
               />
             </svg>
             <h3 className="text-xl font-semibold text-white mb-2">
-              {isFinished 
-                ? "Belum ada campaign yang berakhir/tercapai" 
+              {isFinished
+                ? "Belum ada campaign yang berakhir/tercapai"
                 : "Belum ada campaign yang aktif"}
             </h3>
             <p className="text-gray-400">
-              {isFinished 
-                ? "Campaign akan muncul di sini setelah berakhir atau mencapai target" 
+              {isFinished
+                ? "Campaign akan muncul di sini setelah berakhir atau mencapai target"
                 : "Jadilah yang pertama membuat campaign!"}
             </p>
           </div>
@@ -85,10 +92,16 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
           <div className="grid gap-8 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
             {campaigns.map((campaign, i) => {
               const daysRemaining = daysLeft(campaign.deadline);
-              const progressPercentage = parseFloat(campaign.target) > 0 
-                ? (parseFloat(campaign.amountCollected) / parseFloat(campaign.target)) * 100 
-                : 0;
-              const targetReached = isTargetReached(campaign.amountCollected, campaign.target);
+              const progressPercentage =
+                parseFloat(campaign.target) > 0
+                  ? (parseFloat(campaign.amountCollected) /
+                      parseFloat(campaign.target)) *
+                    100
+                  : 0;
+              const targetReached = isTargetReached(
+                campaign.amountCollected,
+                campaign.target
+              );
 
               return (
                 <div
@@ -103,18 +116,20 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
                       {campaign.owner.slice(0, 6)}...{campaign.owner.slice(-4)}
                     </p>
                   </div>
-                  
+
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        targetReached
-                          ? "bg-green-900 text-green-300"
-                          : daysRemaining <= 0
-                          ? "bg-red-900 text-red-300"
-                          : daysRemaining <= 3
-                          ? "bg-yellow-800 text-yellow-300"
-                          : "bg-purple-900 text-purple-300"
-                      }`}>
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                          targetReached
+                            ? "bg-green-900 text-green-300"
+                            : daysRemaining <= 0
+                            ? "bg-red-900 text-red-300"
+                            : daysRemaining <= 3
+                            ? "bg-yellow-800 text-yellow-300"
+                            : "bg-purple-900 text-purple-300"
+                        }`}
+                      >
                         {targetReached
                           ? "Target Tercapai!"
                           : daysRemaining <= 0
@@ -122,14 +137,16 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
                           : `${daysRemaining} Hari Tersisa`}
                       </span>
                     </div>
-                    
+
                     <p className="text-gray-300 mb-6 line-clamp-3 h-18">
                       {campaign.description}
                     </p>
 
                     <div className="space-y-4">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium text-gray-400">Progress</span>
+                        <span className="font-medium text-gray-400">
+                          Progress
+                        </span>
                         <span className="font-bold text-purple-400">
                           {progressPercentage.toFixed(1)}%
                         </span>
@@ -151,13 +168,17 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
                           <span className="text-2xl font-bold text-white">
                             {campaign.amountCollected}
                           </span>
-                          <span className="text-sm text-gray-400 ml-1">ETH</span>
+                          <span className="text-sm text-gray-400 ml-1">
+                            ETH
+                          </span>
                         </div>
                         <div className="text-right">
                           <span className="text-lg font-bold text-white">
                             {campaign.target}
                           </span>
-                          <span className="text-sm text-gray-400 ml-1">ETH</span>
+                          <span className="text-sm text-gray-400 ml-1">
+                            ETH
+                          </span>
                         </div>
                       </div>
 
@@ -167,7 +188,7 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
                           setOpenModel(true);
                         }}
                         disabled={daysRemaining <= 0 || targetReached}
-                        className={`w-full px-4 py-3 text-sm font-medium text-white transition-colors duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
+                        className={`w-full px-4 py-3 text-sm font-medium cursor-pointer text-white transition-colors duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
                           daysRemaining <= 0 || targetReached
                             ? "bg-gray-600 cursor-not-allowed"
                             : "bg-purple-600 hover:bg-purple-700"
@@ -180,8 +201,18 @@ const Card = ({ title, allcampaign, setOpenModel, setDonateCampaign, isLoading, 
                         ) : (
                           <span className="flex items-center justify-center">
                             Donasi Sekarang
-                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            <svg
+                              className="w-4 h-4 ml-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                              />
                             </svg>
                           </span>
                         )}
