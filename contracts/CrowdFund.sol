@@ -23,32 +23,34 @@ contract CrowdFund {
         uint256 _target,
         uint256 _deadline
     ) public returns (uint256) {
+        require(_deadline > block.timestamp, "The deadline must be a date in the future");
+        
         Campaign storage campaign = campaigns[numberOfCampaigns];
-        require(campaign.deadline < block.timestamp, "The deadline must be a datess in the future");
         campaign.owner = _owner;
         campaign.title = _title;
         campaign.description = _description;
         campaign.target = _target;
         campaign.deadline = _deadline;
         campaign.amountRaised = 0;
+        
         numberOfCampaigns++;
         return numberOfCampaigns - 1;
     }
 
     function donateToCampaign(uint256 _id) public payable {
         uint256 amount = msg.value;
-
         Campaign storage campaign = campaigns[_id];
+        
+        require(block.timestamp <= campaign.deadline, "Campaign has ended");
+        require(amount > 0, "Donation amount must be greater than 0");
+
         campaign.donators.push(msg.sender);
         campaign.donations.push(amount);
+        campaign.amountRaised += amount;
 
-        (bool sent, ) = payable(campaign.owner).call{value: amount}("");
-        // require(sent, "Failed to send Ether");
-        if (sent) {
-            campaign.amountRaised += amount;
-        }
+        (bool sent,) = payable(campaign.owner).call{value: amount}("");
+        require(sent, "Failed to send donation");
     }
-
 
     function getDonator(uint256 _id) public view returns (address[] memory, uint256[] memory) {
         Campaign storage campaign = campaigns[_id];
