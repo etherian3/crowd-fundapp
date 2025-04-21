@@ -67,7 +67,7 @@ const Hero = ({ titleData, createCampaign }) => {
               Web3 Platform
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Platform fundy adalah platform crowdfunding terdesentralisasi
+              Fundy adalah platform crowdfunding terdesentralisasi yang
               menggunakan blockchain untuk transparansi dan keamanan yang lebih
               baik.
             </p>
