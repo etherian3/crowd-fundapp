@@ -22,39 +22,49 @@ export const CrowdFundProvider = ({ children }) => {
   // Fungsi untuk menangani error blockchain dan mengubahnya menjadi pesan user-friendly
   const handleTransactionError = (error) => {
     // Cek kode error untuk 'user rejected action'
-    if (error.code === 4001 || 
-        error.message?.includes("user rejected") || 
-        error.message?.includes("User denied") || 
-        error.message?.includes("transaction signature")) {
+    if (
+      error.code === 4001 ||
+      error.message?.includes("user rejected") ||
+      error.message?.includes("User denied") ||
+      error.message?.includes("transaction signature")
+    ) {
       // Jangan log error lengkap untuk penolakan user
       console.log("Info: Transaksi dibatalkan oleh pengguna");
       return new Error("Transaksi dibatalkan oleh pengguna");
     }
-    
+
     // Log error lain secara penuh untuk debugging
     console.error("Transaction error:", error);
-    
+
     // Error gas
     if (error.message?.includes("gas") || error.message?.includes("fee")) {
-      return new Error("Biaya gas tidak mencukupi. Coba setel gas lebih tinggi atau tunggu jaringan tidak sibuk.");
+      return new Error(
+        "Biaya gas tidak mencukupi. Coba setel gas lebih tinggi atau tunggu jaringan tidak sibuk."
+      );
     }
-    
+
     // Error kontrak
     if (error.message?.includes("execution reverted")) {
       let reason = "Eksekusi kontrak gagal";
       try {
         // Coba ekstrak pesan error dari kontrak jika ada
-        const revertReason = error.message.split("execution reverted:")[1]?.trim() || "";
+        const revertReason =
+          error.message.split("execution reverted:")[1]?.trim() || "";
         if (revertReason) reason += `: ${revertReason}`;
       } catch (e) {}
       return new Error(reason);
     }
-    
+
     // Error jaringan
-    if (error.message?.includes("network") || error.message?.includes("connection")) {
-      return new Error("Masalah koneksi jaringan. Silakan periksa koneksi internet Anda.");
+    if (
+      error.message?.includes("network") ||
+      error.message?.includes("connection")
+    ) {
+      return new Error(
+        "Masalah koneksi jaringan. Silakan periksa koneksi internet Anda."
+      );
     }
-    
+
     // Error umum lainnya
     return new Error("Terjadi kesalahan. Coba lagi nanti.");
   };
@@ -87,9 +97,9 @@ export const CrowdFundProvider = ({ children }) => {
     if (!currentAccount) {
       return Promise.reject(new Error("Wallet tidak terhubung"));
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const contract = await getContractWithSigner();
       console.log("Creating campaign with data:", campaign);
@@ -97,7 +107,12 @@ export const CrowdFundProvider = ({ children }) => {
       // Konversi deadline ke Unix timestamp (detik)
       const deadlineDate = new Date(campaign.deadline);
       const deadlineUnix = Math.floor(deadlineDate.getTime() / 1000);
-      console.log("Deadline Unix timestamp:", deadlineUnix, "Date:", deadlineDate.toISOString());
+      console.log(
+        "Deadline Unix timestamp:",
+        deadlineUnix,
+        "Date:",
+        deadlineDate.toISOString()
+      );
 
       let tx;
       try {
@@ -114,7 +129,7 @@ export const CrowdFundProvider = ({ children }) => {
       }
 
       console.log("Transaction sent:", tx.hash);
-      
+
       try {
         await tx.wait();
         console.log("Transaction confirmed");
@@ -124,13 +139,14 @@ export const CrowdFundProvider = ({ children }) => {
       }
 
       // Tunggu beberapa block untuk memastikan data terupdate
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       await loadCampaigns();
 
       return tx;
     } catch (error) {
       // Tangkap semua error yang tidak tertangkap dan dikonversi
-      const formattedError = error instanceof Error ? error : handleTransactionError(error);
+      const formattedError =
+        error instanceof Error ? error : handleTransactionError(error);
       return Promise.reject(formattedError);
     } finally {
       setIsLoading(false);
@@ -149,17 +165,18 @@ export const CrowdFundProvider = ({ children }) => {
         // Pastikan deadline dalam format Unix timestamp (detik)
         const deadlineTimestamp = Number(campaign.deadline);
         // Konversi jika ternyata deadline adalah dalam milisecond bukan seconds
-        const adjustedDeadline = deadlineTimestamp > 9999999999 
-          ? Math.floor(deadlineTimestamp / 1000) 
-          : deadlineTimestamp;
-        
+        const adjustedDeadline =
+          deadlineTimestamp > 9999999999
+            ? Math.floor(deadlineTimestamp / 1000)
+            : deadlineTimestamp;
+
         console.log(`Campaign ${i} deadline:`, {
           original: campaign.deadline.toString(),
           asNumber: deadlineTimestamp,
           adjusted: adjustedDeadline,
-          asDate: new Date(adjustedDeadline * 1000).toISOString()
+          asDate: new Date(adjustedDeadline * 1000).toISOString(),
         });
-        
+
         return {
           owner: campaign.owner.toLowerCase(),
           title: campaign.title,
@@ -186,7 +203,7 @@ export const CrowdFundProvider = ({ children }) => {
 
       const allCampaigns = await getCampaigns();
       const userCampaigns = allCampaigns.filter(
-        campaign => campaign.owner === currentAccount.toLowerCase()
+        (campaign) => campaign.owner === currentAccount.toLowerCase()
       );
 
       console.log("User campaigns:", userCampaigns);
@@ -201,9 +218,9 @@ export const CrowdFundProvider = ({ children }) => {
     if (!currentAccount) {
       return Promise.reject(new Error("Wallet tidak terhubung"));
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const contract = await getContractWithSigner();
 
@@ -218,7 +235,7 @@ export const CrowdFundProvider = ({ children }) => {
       }
 
       console.log("Donation transaction sent:", tx.hash);
-      
+
       try {
         await tx.wait();
         console.log("Donation confirmed");
@@ -231,7 +248,8 @@ export const CrowdFundProvider = ({ children }) => {
       return tx;
     } catch (error) {
       // Tangkap semua error yang tidak tertangkap dan dikonversi
-      const formattedError = error instanceof Error ? error : handleTransactionError(error);
+      const formattedError =
+        error instanceof Error ? error : handleTransactionError(error);
       return Promise.reject(formattedError);
     } finally {
       setIsLoading(false);
@@ -306,11 +324,11 @@ export const CrowdFundProvider = ({ children }) => {
     } catch (error) {
       if (error.code === 4001) {
         console.log("Info: Permintaan koneksi wallet ditolak oleh pengguna");
-        return Promise.reject(new Error("Anda menolak untuk menghubungkan wallet"));
+        // return Promise.reject(new Error("Anda menolak untuk menghubungkan wallet"));
       }
-      
+
       console.error("Error in connectWallet:", error);
-      return Promise.reject(new Error("Gagal menghubungkan wallet"));
+      // return Promise.reject(new Error("Gagal menghubungkan wallet"));
     }
   };
 
