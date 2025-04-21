@@ -4,56 +4,71 @@ function Footer() {
   const productList = ["Market", "ERC20 Token", "Donation"];
   const contactList = ["support@cryptoking.com", "info@example", "Contact us"];
   const usefullLink = ["Home", "About us", "Company Bio"];
+
   return (
-    <footer className="text-center text-white backgroundMain lg:text-left">
-      <div className="mx-6 py-10 text-center md:text-left ">
-        <div className="grid-1 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div className="">
-            <h6 className="mb-4 flex items-center justify-center font-semibold uppercase md:justify-start">
-              Crypto King
-            </h6>
-            <p>
-              Here you can use rows and columns to organize your footer content.
-              Lorem ipsum dolor sit amet.
+    <footer className="footer-wrapper border-t-4 border-purple-600  bg-gray-950">
+      <div className="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
+        <div className="grid gap-10 row-gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2">
+            <a href="/" className="inline-flex items-center">
+              <span className="text-xl font-bold tracking-wide text-white uppercase">
+                Crypto King
+              </span>
+            </a>
+            <div className="mt-6 lg:max-w-sm">
+              <p className="text-sm text-gray-300">
+                Platform crowdfunding terdesentralisasi menggunakan blockchain
+                untuk transparansi dan keamanan yang lebih baik.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-2 text-sm">
+            <p className="text-base font-bold tracking-wide text-white">
+              Produk
             </p>
-          </div>
-          <div className="">
-            <h6 className="mb-4 flex justify-center font-semibold uppercase md:justify-start">
-              Products
-            </h6>
             {productList.map((el, i) => (
-              <p className="mb-4" key={i + 1}>
-                <a href="#!">{el}</a>
-              </p>
+              <div key={i + 1}>
+                <a
+                  href="/"
+                  className="text-gray-300 transition-colors duration-300 hover:text-purple-400"
+                >
+                  {el}
+                </a>
+              </div>
             ))}
           </div>
-          <div className="">
-            <h6 className="mb-4 flex justify-center font-semibold uppercase md:justify-start">
-              Useful links
-            </h6>
-            {usefullLink.map((el, i) => (
-              <p className="mb-4" key={i + 1}>
-                <a href="#!">{el}</a>
-              </p>
-            ))}
-          </div>
-          <div className="">
-            <h6 className="mb-4 flex justify-center font-semibold uppercase md:justify-start">
-              Contact
-            </h6>
+          <div className="space-y-2 text-sm">
+            <p className="text-base font-bold tracking-wide text-white">
+              Kontak
+            </p>
             {contactList.map((el, i) => (
-              <p className="mb-4" key={i + 1}>
-                <a href="#!">{el}</a>
-              </p>
+              <div key={i + 1}>
+                <a
+                  href="/"
+                  className="text-gray-300 transition-colors duration-300 hover:text-purple-400"
+                >
+                  {el}
+                </a>
+              </div>
             ))}
           </div>
         </div>
-      </div>
-      <div className="backgroundMain p-6 text-center">
-        <span>2025 Copyright: </span>
-        <a className="font-semibold" href="https://tailwind-elements.com">
-          Crypto King
-        </a>
+        <div className="flex flex-col justify-between pt-5 pb-10 border-t border-gray-700 sm:flex-row">
+          <p className="text-sm text-gray-400">
+            © {new Date().getFullYear()} Crypto King. Hak cipta dilindungi.
+          </p>
+          <div className="flex items-center mt-4 space-x-4 sm:mt-0">
+            {usefullLink.map((el, i) => (
+              <a
+                key={i + 1}
+                href="/"
+                className="text-gray-400 transition-colors duration-300 hover:text-purple-400"
+              >
+                {el}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
   );
