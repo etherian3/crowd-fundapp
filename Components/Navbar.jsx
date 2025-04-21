@@ -46,7 +46,7 @@ const Navbar = () => {
             >
               <Logo color="white" />
               <span className="ml-2 text-lg font-bold tracking-wide text-white uppercase">
-                CROWDFUND
+                FUNDY
               </span>
             </a>
             <ul className="flex items-center hidden space-x-8 lg:flex">
@@ -69,22 +69,22 @@ const Navbar = () => {
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-1.5 transition"
+                className="flex items-center space-x-2 cursor-pointer bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-1.5 transition"
               >
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-medium text-white">
                     {formatAddress(currentAccount)}
                   </span>
-                  <span className="text-xs text-gray-300">
-                    {balance} ETH
-                  </span>
+                  <span className="text-xs text-gray-300">{balance} ETH</span>
                 </div>
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-gray-800 rounded-lg shadow-xl border border-gray-700 p-4 z-50">
                   <div className="mb-2">
-                    <span className="text-xs text-gray-400">Alamat Wallet:</span>
+                    <span className="text-xs text-gray-400">
+                      Alamat Wallet:
+                    </span>
                     <div className="mt-1 text-sm text-gray-300 break-all">
                       {currentAccount}
                     </div>
