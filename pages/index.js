@@ -1,64 +1,90 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
-// INTERNAL IMPORT
-import { CrowdFundContext } from "@/Context/CrowdFund";
-import { Hero, Card, PopUp } from "../Components";
+//INTERNAL IMPORT
+import { CrowdFundContext } from "../Context/CrowdFund";
+import { Hero, Card, PopUp } from "../Components/index";
+import Head from "next/head";
 
 const index = () => {
   const {
     titleData,
-    getCampaigns,
+    currentAccount,
+    allCampaigns,
+    isLoading,
     createCampaign,
-    donate,
-    getUserCampaigns,
-    getDonations,
   } = useContext(CrowdFundContext);
 
-  const [allcampaign, setAllcampaign] = useState();
-  const [usercampaign, setUsercampaign] = useState();
+  const [openModal, setOpenModal] = useState(false);
+  const [donateCampaign, setDonateCampaign] = useState();
+  const [finishedCampaigns, setFinishedCampaigns] = useState([]);
+  const [activeCampaigns, setActiveCampaigns] = useState([]);
 
   useEffect(() => {
-    const getCampaignsData = getCampaigns();
-    const userCampaignsData = getUserCampaigns();
-    return async () => {
-      const allData = await getCampaignsData;
-      const userData = await userCampaignsData;
-      setAllcampaign(allData);
-      setUsercampaign(userData);
-    };
-  }, []);
+    if (allCampaigns && allCampaigns.length > 0) {
+      // Filter untuk campaign yang masih aktif
+      const active = allCampaigns.filter(campaign => {
+        const deadline = Number(campaign.deadline);
+        const now = Math.floor(Date.now() / 1000); // Konversi ke detik
+        const targetReached = parseFloat(campaign.amountCollected) >= parseFloat(campaign.target);
+        
+        return deadline > now && !targetReached;
+      });
+      
+      // Filter untuk campaign yang sudah berakhir atau target tercapai
+      const finished = allCampaigns.filter(campaign => {
+        const deadline = Number(campaign.deadline);
+        const now = Math.floor(Date.now() / 1000); // Konversi ke detik
+        const targetReached = parseFloat(campaign.amountCollected) >= parseFloat(campaign.target);
+        
+        return deadline <= now || targetReached;
+      });
+      
+      setActiveCampaigns(active);
+      setFinishedCampaigns(finished);
+    } else {
+      setActiveCampaigns([]);
+      setFinishedCampaigns([]);
+    }
+  }, [allCampaigns]);
 
-  // DONATE POPUP MODEL
-  const [openModel, setOpenModel] = useState(false);
-  const [donateCampaign, setDonateCampaign] = useState();
-
-  console.log(donateCampaign);
   return (
-    <>
-      <Hero titleData={titleData} createCampaign={createCampaign} />
+    <div>
+      <Head>
+        <title>Crowd Funding App | Donasi untuk Proyek</title>
+        <meta name="description" content="Platform crowdfunding untuk membantu pendanaan proyek" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      
+      <div> {/* Tidak perlu padding-top karena Navbar dirender di _app.js */}
+        <Hero titleData={titleData} createCampaign={createCampaign} />
+        
+        <Card 
+          title="Semua Campaign Aktif"
+          allcampaign={activeCampaigns}
+          setOpenModel={setOpenModal}
+          setDonateCampaign={setDonateCampaign}
+          isLoading={isLoading}
+        />
 
-      <Card
-        title="All Listed Campaign"
-        allcampaign={allcampaign}
-        setOpenModel={setOpenModel}
-        setDonateCampaign={setDonateCampaign}
-      />
-      <Card
-        title="Your Created Campaign"
-        allcampaign={usercampaign}
-        setOpenModel={setOpenModel}
-        setDonateCampaign={setDonateCampaign}
-      />
+        {finishedCampaigns.length > 0 && (
+          <Card
+            title="Campaign Berakhir & Tercapai"
+            allcampaign={finishedCampaigns}
+            setOpenModel={setOpenModal}
+            setDonateCampaign={setDonateCampaign}
+            isLoading={isLoading}
+            isFinished={true}
+          />
+        )}
+      </div>
 
-      {openModel && (
+      {openModal && (
         <PopUp
-          setOpenModel={setOpenModel}
-          getDonations={getDonations}
-          donate={donate}
-          donateFunction={donate}
+          setOpenModel={setOpenModal}
+          donateCampaign={donateCampaign}
         />
       )}
-    </>
+    </div>
   );
 };
 
