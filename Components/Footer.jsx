@@ -2,7 +2,11 @@ import React from "react";
 
 function Footer() {
   const productList = ["Market", "ERC20 Token", "Donation"];
-  const contactList = ["support@cryptoking.com", "info@example", "Contact us"];
+  const contactList = [
+    "rianziwalker@gmail.com",
+    "fundyinc@gmail.com",
+    "Contact us",
+  ];
   const usefullLink = ["Home", "About us", "Company Bio"];
 
   return (
@@ -12,7 +16,7 @@ function Footer() {
           <div className="sm:col-span-2">
             <a href="/" className="inline-flex items-center">
               <span className="text-xl font-bold tracking-wide text-white uppercase">
-                Crypto King
+                FUNDY Inc.
               </span>
             </a>
             <div className="mt-6 lg:max-w-sm">
@@ -55,7 +59,7 @@ function Footer() {
         </div>
         <div className="flex flex-col justify-between pt-5 pb-10 border-t border-gray-700 sm:flex-row">
           <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} Crypto King. Hak cipta dilindungi.
+            © {new Date().getFullYear()} Fundy. Hak cipta dilindungi.
           </p>
           <div className="flex items-center mt-4 space-x-4 sm:mt-0">
             {usefullLink.map((el, i) => (
