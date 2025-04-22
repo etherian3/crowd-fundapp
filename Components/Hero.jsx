@@ -12,6 +12,12 @@ const Hero = ({ titleData, createCampaign }) => {
     deadline: "",
   });
 
+  // Fungsi untuk mendapatkan tanggal minimum (hari ini) untuk input deadline
+  const getMinDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+  };
+
   const createNewCampaign = async (e) => {
     e.preventDefault();
 
@@ -21,6 +27,7 @@ const Hero = ({ titleData, createCampaign }) => {
         return;
       }
 
+      // Validasi dasar form
       if (
         !campaign.title ||
         !campaign.description ||
@@ -31,18 +38,69 @@ const Hero = ({ titleData, createCampaign }) => {
         return;
       }
 
+      // Validasi judul
+      if (campaign.title.trim().length < 3) {
+        toast.error("Judul harus minimal 3 karakter");
+        return;
+      }
+
+      // Validasi deskripsi
+      if (campaign.description.trim().length < 10) {
+        toast.error("Deskripsi terlalu pendek, minimal 10 karakter");
+        return;
+      }
+
+      // Validasi target amount
+      const targetAmount = parseFloat(campaign.amount);
+      if (isNaN(targetAmount) || targetAmount <= 0) {
+        toast.error("Target donasi harus lebih dari 0 ETH");
+        return;
+      }
+
+      // Validasi deadline yang lebih ketat
+      try {
+        const deadlineDate = new Date(campaign.deadline);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Validasi tanggal yang valid
+        if (!(deadlineDate instanceof Date && !isNaN(deadlineDate))) {
+          toast.error("Format tanggal deadline tidak valid");
+          return;
+        }
+        
+        // Pastikan deadline minimal 1 hari setelah hari ini
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        if (deadlineDate < tomorrow) {
+          toast.error("Deadline harus minimal 1 hari setelah hari ini");
+          return;
+        }
+      } catch (error) {
+        console.error("Error validasi deadline:", error);
+        toast.error("Format tanggal tidak valid");
+        return;
+      }
+
       setIsLoading(true);
 
+      // Tambahkan parameter target dari amount untuk konsistensi
       await createCampaign({
         ...campaign,
-        target: campaign.amount, // Menambahkan target amount yang akan digunakan smart contract
+        target: campaign.amount
       });
 
       toast.success("Campaign berhasil dibuat!");
       setCampaign({ title: "", description: "", amount: "", deadline: "" });
     } catch (error) {
-      // Error sudah diformat oleh Context
-      toast.error(error.message || "Gagal membuat campaign");
+      console.error("Error membuat campaign:", error);
+      // Tampilkan error message yang lebih informatif
+      if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Gagal membuat campaign. Silakan coba lagi.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -172,9 +230,13 @@ const Hero = ({ titleData, createCampaign }) => {
                       }
                       required
                       type="date"
+                      min={getMinDate()}
                       className="w-full px-4 py-2 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       id="deadline"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Tanggal berakhirnya kampanye (minimal 1 hari dari sekarang)
+                    </p>
                   </div>
                 </div>
                 <button
