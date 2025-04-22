@@ -2,7 +2,7 @@ import crowdFund from "./CrowdFund.json";
 
 // CrowdFunding contract address
 // Gunakan alamat kontrak yang benar, alamat ini bisa diganti sesuai dengan hardhat atau tempat deploy lainnya
-export const CrowdFundAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+export const CrowdFundAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 // CrowdFunding contract ABI
 export const CrowdFundABI = crowdFund.abi || [
